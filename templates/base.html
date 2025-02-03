@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Diet Recommendations{% endblock %}</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% if not is_main_page %}
+    <header class="site-header">
+        <a href="/" class="site-title">AI Diet Recommendations</a>
+    </header>
+    {% endif %}
+
+    <div class="menu-container">
+        <button class="hamburger-menu" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="dropdown-menu">
+            <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+                <span class="theme-icon">☀️</span>
+                <span class="theme-text">Light Mode</span>
+            </button>
+            {% if current_user.is_authenticated %}
+                <a href="/saved_recipes" class="menu-link">
+                    <span class="menu-icon">📋</span>
+                    <span class="menu-text">Saved Recipes</span>
+                </a>
+                <a href="/logout" class="menu-link">
+                    <span class="menu-icon">🚪</span>
+                    <span class="menu-text">Logout</span>
+                </a>
+            {% else %}
+                <a href="/login" class="menu-link">
+                    <span class="menu-icon">🔑</span>
+                    <span class="menu-text">Login</span>
+                </a>
+                <a href="/register" class="menu-link">
+                    <span class="menu-icon">📝</span>
+                    <span class="menu-text">Register</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <!-- Register Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/static/sw.js').then(function(registration) {
+            console.log('ServiceWorker registered with scope:', registration.scope);
+          }, function(err) {
+            console.log('ServiceWorker registration failed:', err);
+          });
+        });
+      }
+    </script>
+
+    <script>
+        const themeToggle = document.querySelector('.theme-toggle');
+        const themeIcon = document.querySelector('.theme-icon');
+        const themeText = document.querySelector('.theme-text');
+        
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            themeIcon.innerHTML = '☀️';  // Sun icon when dark mode is active (indicating you can switch to light mode)
+            themeText.textContent = 'Light Mode';
+        } else {
+            themeIcon.innerHTML = '🌙';  // Moon icon when light mode is active (indicating you can switch to dark mode)
+            themeText.textContent = 'Dark Mode';
+        }
+
+        function toggleMenu() {
+            document.querySelector('.dropdown-menu').classList.toggle('show');
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+            themeIcon.innerHTML = isDarkMode ? '☀️' : '🌙';
+            themeText.textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.menu-container')) {
+                document.querySelector('.dropdown-menu').classList.remove('show');
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html> 
