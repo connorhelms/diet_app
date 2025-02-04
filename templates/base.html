@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meal Planner App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Dark mode styles */
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .dark-mode .navbar {
+            background-color: #333 !important;
+        }
+        .dark-mode .card {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+        .dark-mode input,
+        .dark-mode textarea,
+        .dark-mode select {
+            background-color: #2e2e2e; /* Dark gray for dark mode */
+            color: #e0e0e0;
+            border: 1px solid #555;
+        }
+        /* Light mode styles for input areas */
+        input,
+        textarea,
+        select {
+            background-color: #e8e8e8; /* Updated to a slightly darker very light gray */
+            color: #121212;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <style>
+        /* Set an off white/light gray background for light mode */
+        body:not(.dark-mode) {
+            background-color: #f0f0f0;
+            color: #121212;
+        }
+    </style>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{{ url_for('index') }}">Meal Planner</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('saved_recipes') }}">Saved Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <button id="darkModeToggle" class="btn btn-secondary ml-2" onclick="toggleDarkMode()">Dark Mode</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load dark mode preference
+        if (localStorage.getItem('dark-mode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').textContent = 'Light Mode';
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('dark-mode', 'enabled');
+                document.getElementById('darkModeToggle').textContent = 'Light Mode';
+            } else {
+                localStorage.setItem('dark-mode', 'disabled');
+                document.getElementById('darkModeToggle').textContent = 'Dark Mode';
+            }
+        }
+    </script>
+</body>
+</html> 
