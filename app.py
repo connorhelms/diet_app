@@ -79,7 +79,7 @@ def index():
             prompt += f"Diet type: {diet_type}.\n"
         if price:
             prompt += f"Price range: {price}.\n"
-        prompt += """For each meal, please format the response exactly as follows (including the exact headers):
+        prompt += """For each meal, please format the response exactly as follows (including the exact headers) [Do not include any special characters like ** or # or * or anything else, only $ for price]:
 
 [Recipe Name]
 Ingredients:
