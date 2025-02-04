@@ -108,9 +108,11 @@ Instructions:
             )
             raw_text = response.choices[0].message.content.strip()
             
-            # Add debugging information
+            # Add debugging information and log it
             debug_info.append("ChatGPT prompt: " + prompt)
             debug_info.append("ChatGPT raw response: " + raw_text)
+            app.logger.info("ChatGPT prompt: %s", prompt)
+            app.logger.info("ChatGPT raw response: %s", raw_text)
 
             # Updated split regex to catch "Meal X:" or bracketed recipe names.
             meal_blocks = re.split(r'(?=Meal\s*\d+:)|(?=\[)', raw_text)
@@ -157,7 +159,18 @@ Instructions:
                 fields = parse_meal_block(block)
                 meal_options.append(fields)
         except Exception as e:
-            meal_options = [f"An error occurred: {str(e)}"]
+            error_msg = f"An error occurred: {str(e)}"
+            app.logger.error("Error during API call: %s", error_msg, exc_info=True)
+            debug_info.append(error_msg)
+            # Wrap the error in a dict so the template can render it
+            meal_options = [{
+                "title": error_msg,
+                "ingredients": "",
+                "servings": "",
+                "nutrition": "",
+                "cost": "",
+                "instructions": ""
+            }]
 
     return render_template("index.html", meal_options=meal_options, debug_info=debug_info)
 
