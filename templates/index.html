@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Meal Planner</h1>
+<form method="post">
+    <div class="form-group">
+        <label for="dietaryRestrictions">Dietary Restrictions</label>
+        <input type="text" class="form-control" name="dietaryRestrictions" id="dietaryRestrictions">
+    </div>
+    <div class="form-group">
+        <label for="ingredients">Ingredients</label>
+        <input type="text" class="form-control" name="ingredients" id="ingredients">
+    </div>
+    <div class="form-group">
+        <label for="region">Region</label>
+        <select class="form-control" name="region" id="region">
+            <option value="" selected>-- Select a Region --</option>
+            <option value="American">American</option>
+            <option value="Canadian">Canadian</option>
+            <option value="Mexican">Mexican</option>
+            <option value="Caribbean">Caribbean</option>
+            <option value="Italian">Italian</option>
+            <option value="French">French</option>
+            <option value="Spanish">Spanish</option>
+            <option value="Mediterranean">Mediterranean</option>
+            <option value="Middle Eastern">Middle Eastern</option>
+            <option value="Indian">Indian</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Korean">Korean</option>
+            <option value="Thai">Thai</option>
+            <option value="Vietnamese">Vietnamese</option>
+            <option value="African">African</option>
+            <option value="European">European</option>
+            <option value="South American">South American</option>
+            <option value="North American">North American</option>
+            <option value="Australian">Australian</option>
+            <option value="Fusion">Fusion</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="dietType">Diet Type</label>
+        <select class="form-control" name="dietType" id="dietType">
+            <option value="">Select a diet type</option>
+            <option value="Diabetic Friendly">Diabetic Friendly</option>
+            <option value="High Protein">High Protein</option>
+            <option value="Carnivore">Carnivore</option>
+            <option value="Weight Loss - Light">Weight Loss - Light</option>
+            <option value="Weight Loss - Moderate">Weight Loss - Moderate</option>
+            <option value="Weight Loss - Heavy">Weight Loss - Heavy</option>
+            <option value="Weight Gain - Light">Weight Gain - Light</option>
+            <option value="Weight Gain - Moderate">Weight Gain - Moderate</option>
+            <option value="Weight Gain - Heavy">Weight Gain - Heavy</option>
+            <option value="Weight Gain - Healthy">Weight Gain - Healthy</option>
+            <option value="Vegetarian">Vegetarian</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Keto">Keto</option>
+            <!-- Add more options as needed -->
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="price">Price Range</label>
+        <select class="form-control" name="price" id="price">
+            <option value="">Select a price range</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Get Meal Options</button>
+</form>
+
+{% if debug_info %}
+<div class="alert alert-info mt-4">
+  <h5>Debug Info:</h5>
+  <ul>
+     {% for line in debug_info %}
+         <li>{{ line }}</li>
+     {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if meal_options %}
+<hr>
+<h2>Meal Options</h2>
+{% for option in meal_options %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h4>{{ option.title }}</h4>
+            <p><strong>Ingredients:</strong> {{ option.ingredients }}</p>
+            <p><strong>Servings:</strong> {{ option.servings }}</p>
+            <p><strong>Nutrition Facts:</strong> {{ option.nutrition }}</p>
+            <p><strong>Cost per Serving:</strong> {{ option.cost }}</p>
+            <p><strong>Instructions:</strong> {{ option.instructions }}</p>
+            <form method="post" action="{{ url_for('save_recipe') }}">
+                <input type="hidden" name="title" value="{{ option.title }}">
+                <input type="hidden" name="content" value="{{ option.title }}">
+                <input type="hidden" name="ingredients" value="{{ option.ingredients }}">
+                <input type="hidden" name="servings" value="{{ option.servings }}">
+                <input type="hidden" name="nutrition" value="{{ option.nutrition }}">
+                <input type="hidden" name="cost" value="{{ option.cost }}">
+                <input type="hidden" name="instructions" value="{{ option.instructions }}">
+                <button type="submit" class="btn btn-success">Save Recipe</button>
+            </form>
+        </div>
+    </div>
+{% endfor %}
+{% endif %}
+{% endblock %} 
